@@ -1,3 +1,4 @@
 cache/
 data/processed/
 **/__pycache__/
+**/*.pyc
