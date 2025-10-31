@@ -1,0 +1,11 @@
+paths:
+  input_file: "data/raw_data/problem_statements.xlsx"
+  output_dir: "data/processed"
+
+chunking:
+  target_column: ["Title","Description"]
+  window_size: 2
+
+output:
+  metadata_file: "metadata.csv"
+  chunks_file: "chunks.csv"
