@@ -1,7 +1,0 @@
-pandas
-openpyxl
-numpy
-nltk
-torch
-transformers
-faiss-cpu
