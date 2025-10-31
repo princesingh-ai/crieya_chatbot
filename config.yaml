@@ -3,8 +3,8 @@ paths:
   output_dir: "data/processed"
 
 chunking:
-  target_column: ["Title","Description"]
-  window_size: 2
+  target_columns: ["Title","Description"]
+  window_size: 3
 
 output:
   metadata_file: "metadata.csv"
