@@ -7,5 +7,4 @@ chunking:
   window_size: 3
 
 output:
-  metadata_file: "metadata.csv"
   chunks_file: "chunks.csv"
