@@ -29,9 +29,6 @@ def process_excel(input_path=input_path):
             chunks = chunk_text(text, window_size)
 
             for chunk_id, chunk in enumerate(chunks):
-                if target_col == "Title":
-                    chunk = "Title: " + chunk
-
                 chunk_rows.append(
                     {
                         "file_name": file_name,
