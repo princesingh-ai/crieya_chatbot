@@ -29,6 +29,9 @@ def process_excel(input_path=input_path):
             chunks = chunk_text(text, window_size)
 
             for chunk_id, chunk in enumerate(chunks):
+                if target_col == "Title":
+                    chunk = "Title: " + chunk
+
                 chunk_rows.append(
                     {
                         "file_name": file_name,
@@ -45,6 +48,7 @@ def process_excel(input_path=input_path):
     pd.DataFrame(chunk_rows).to_csv(output_file, index=False)
 
     print(f"✅ Saved {len(chunk_rows)} chunks to {output_dir / output_config['chunks_file']}")
+
 
 if __name__ == "__main__":
     process_excel()
