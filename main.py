@@ -15,6 +15,7 @@ def process_excel(input_path=input_path):
     df = load_excel(input_path)
     file_name = input_path.name
     chunk_rows = []
+    chunk_id_global = 0
 
     # Process each row
     for _, row in df.iterrows():
@@ -32,9 +33,10 @@ def process_excel(input_path=input_path):
                         "id": row.get("ID", None),
                         "column_name": target_col,
                         "chunk_text": chunk,
-                        "chunk_id": chunk_id,
+                        "chunk_id": chunk_id_global,
                     }
                 )
+                chunk_id_global += 1     
 
     # Save results
     pd.DataFrame(chunk_rows).to_csv(chunks_path, index=False)
