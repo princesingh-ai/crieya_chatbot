@@ -1,10 +1,9 @@
 paths:
   input_file: "data/raw_data/problem_statements.xlsx"
   output_dir: "data/processed"
+  chunks_file: "chunks.csv"
+  cache_dir: "cache"
 
 chunking:
-  target_columns: ["Title","Description"]
+  target_columns: ["Title", "Description"]
   window_size: 3
-
-output:
-  chunks_file: "chunks.csv"

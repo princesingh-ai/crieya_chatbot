@@ -3,17 +3,11 @@ from pathlib import Path
 from helpers.data_loader import load_excel
 from src.chunker import chunk_text
 from helpers.utils import load_config
+from helpers.utils import input_path, chunks_path, config
 
-# Load configuration
-config = load_config()
-config_paths = config["paths"]
-chunk_config = config["chunking"]
-output_config = config["output"]
 
-input_path = Path(config_paths["input_file"])
-output_dir = Path(config_paths["output_dir"])
-target_columns = chunk_config["target_columns"]
-window_size = int(chunk_config["window_size"])
+target_columns = config["chunking"]["target_columns"]
+window_size = int(config["chunking"]["window_size"])
 
 
 def process_excel(input_path=input_path):
@@ -43,11 +37,9 @@ def process_excel(input_path=input_path):
                 )
 
     # Save results
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / output_config["chunks_file"]
-    pd.DataFrame(chunk_rows).to_csv(output_file, index=False)
+    pd.DataFrame(chunk_rows).to_csv(chunks_path, index=False)
 
-    print(f"✅ Saved {len(chunk_rows)} chunks to {output_dir / output_config['chunks_file']}")
+    print(f"✅ Saved {len(chunk_rows)} chunks to {chunks_path}")
 
 
 if __name__ == "__main__":

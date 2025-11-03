@@ -1,10 +1,10 @@
 import nltk
 from nltk.tokenize import sent_tokenize
-from helpers.utils import load_config
+from helpers.utils import load_config, get_project_root, config, cache_dir
 
-nltk.download("punkt_tab")
 
-config = load_config()
+nltk.data.path.append(str(cache_dir))
+nltk.download("punkt_tab", download_dir=cache_dir)
 
 
 def chunk_text(text: str, window_size: int = config["chunking"]["window_size"]) -> list[str]:
