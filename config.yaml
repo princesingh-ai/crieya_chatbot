@@ -7,3 +7,9 @@ paths:
 chunking:
   target_columns: ["Title", "Description"]
   window_size: 3
+
+embedding:
+  model_name : "sentence-transformers/msmarco-distilbert-dot-v5"
+  text_column : "chunk_text"
+  output_file : "embedded_problem_statements.csv"
+  batch_size : 16
