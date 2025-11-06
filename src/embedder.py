@@ -3,14 +3,10 @@ from transformers import AutoTokenizer, AutoModel
 import torch
 import numpy as np
 from tqdm import tqdm
-from qdrant_client import QdrantClient
-from qdrant_client.models import PointStruct, VectorParams, Distance
-from helpers.utils import config, input_path
-
-collection_name = "problem_statement_chunks"
+import faiss
+from helpers.utils import config, chunks_path, output_dir
 
 # Model settings
-
 embedding_config = config["embedding"]
 text_column = embedding_config["text_column"]
 model_name = embedding_config["model_name"]
@@ -26,10 +22,10 @@ model = AutoModel.from_pretrained(model_name).to(device)
 model.eval()
 
 # Load chunked data
-df = pd.read_csv(input_path)
+df = pd.read_csv(chunks_path)
 texts = df[text_column].astype(str).tolist()
 chunk_ids = df["chunk_id"].tolist()
-print(f"Loaded {len(texts)} texts from {input_path.name}")
+print(f"✅ Loaded {len(texts)} texts from {chunks_path.name}")
 
 
 # Mean pooling : converts token level embeddings -> one sentence level embeddings
@@ -40,7 +36,7 @@ def mean_pooling(model_output, attention_mask):
 
 
 # This: Tokenizes the text, Runs it through the transformer, Applies mean_pooing(), Normalizes the result, and Returns embeddings as numpy arrays
-def encode(texts):
+def tokenize(texts):
     tokenized_input = tokenizer(texts, padding=True, truncation=True, return_tensors="pt", max_length=512).to(device)
 
     with torch.no_grad():
@@ -49,27 +45,24 @@ def encode(texts):
     emb = mean_pooling(model_output, tokenized_input["attention_mask"])
     return emb.cpu().numpy()
 
+print("\nGenerating embeddings...")
+embeddings = []
+for i in tqdm(range(0, len(texts), batch_size)):
+    batch_texts = texts[i:i + batch_size]
+    batch_embeddings = tokenize(batch_texts)
+    embeddings.extend(batch_embeddings)
 
-# Qdrant Setup
-client = QdrantClient(path=str(project_root / "qdrant_db"))  # Local qdrant store
-dim = model.config.hidden_size
+embeddings = np.array(embeddings).astype("float32")
+print(f"✅ Generated embeddings with shape: {embeddings.shape}")
 
-client.recreate_collection(
-    collection_name=collection_name,
-    vectors_config=VectorParams(size=dim, distance=Distance.COSINE),
-)
+vector_size = embeddings.shape[1]
+faiss_index = faiss.IndexFlatIP(vector_size)
+faiss_index.add(embeddings)
+print(f"✅ FAISS index created with {faiss_index.ntotal} vectors.")
 
-print("Generating embeddings and uploding to Qdrant....")
+faiss_index_path = output_dir / "embeddings.index"
+faiss.write_index(faiss_index, str(faiss_index_path))
+print(f"✅ FAISS index saved to: {faiss_index_path}")
 
-for i in tqdm(range(0, len(texts), batch_size), desc="Embedding to Qdrant"):
-    batch_texts = texts[i : i + batch_size]
-    batch_ids = chunk_ids[i : i + batch_size]
-    batch_embs = encode(batch_texts)
-
-    points = [
-        PointStruct(id=int(cid), vector=vec.tolist(), payload={"chunk_id": int(cid), "text": text})
-        for cid, vec, text in zip(batch_ids, batch_embs, batch_texts)
-    ]
-
-    client.upsert(collection_name=collection_name, points=points)
-print(f"✅ Successfully stored {len(texts)} embeddings in Qdrant ({collection_name})")
+index_to_chunk_id = {i: cid for i, cid in enumerate(chunk_ids)}
+print(f"✅ Chunk id mapping created successfully")
