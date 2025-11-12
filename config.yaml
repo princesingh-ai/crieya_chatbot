@@ -13,3 +13,6 @@ embedding:
   text_column : "chunk_text"
   output_file : "embedded_problem_statements.csv"
   batch_size : 16
+
+retrieval:
+  top_k : 5
