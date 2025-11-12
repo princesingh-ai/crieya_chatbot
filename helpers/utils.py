@@ -31,3 +31,5 @@ chunks_path = output_dir / config["paths"]["chunks_file"]
 
 cache_dir = project_root / config["paths"]["cache_dir"]
 cache_dir.mkdir(parents=True, exist_ok=True)
+
+mapping_path = output_dir / "index_mapping.json"
