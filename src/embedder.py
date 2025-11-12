@@ -4,13 +4,18 @@ import torch
 import numpy as np
 from tqdm import tqdm
 import faiss
-from helpers.utils import config, chunks_path, output_dir
+import json
+from helpers.utils import config, chunks_path, output_dir, mapping_path
 
 # Model settings
 embedding_config = config["embedding"]
 text_column = embedding_config["text_column"]
 model_name = embedding_config["model_name"]
 batch_size = int(embedding_config.get("batch_size"))
+
+# retrieval settings 
+retrieval = config["retrieval"]
+k = retrieval["top_k"]
 
 # Select GPU if available
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -34,8 +39,7 @@ def mean_pooling(model_output, attention_mask):
     input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-
-# This: Tokenizes the text, Runs it through the transformer, Applies mean_pooing(), Normalizes the result, and Returns embeddings as numpy arrays
+# This: Tokenizes the text, Runs it through the transformer, Applies mean_pooing(), and Returns embeddings as numpy arrays
 def tokenize(texts):
     tokenized_input = tokenizer(texts, padding=True, truncation=True, return_tensors="pt", max_length=512).to(device)
 
@@ -65,4 +69,40 @@ faiss.write_index(faiss_index, str(faiss_index_path))
 print(f"✅ FAISS index saved to: {faiss_index_path}")
 
 index_to_chunk_id = {i: cid for i, cid in enumerate(chunk_ids)}
+with open(mapping_path, "w") as f:
+    json.dump(index_to_chunk_id, f)
+
 print(f"✅ Chunk id mapping created successfully")
+print(f"✅ Chunk id mapping save to: {mapping_path}")
+
+def search(query, k):
+    query_emb = tokenize([query])
+    query_emb = np.array(query_emb)
+    distances, indices = faiss_index.search(query_emb, k)
+
+    results = []
+    for rank, idx in enumerate(indices[0]):
+        chunk_id = index_to_chunk_id[idx]
+        chunk_row = df.loc[df["chunk_id"] == chunk_id]
+        chunk_text = chunk_row["chunk_text"].values[0] if not chunk_row.empty else "[Missing chunk]"
+        results.append({
+            "rank": rank + 1,
+            "chunk_id": chunk_id,
+            "score": float(distances[0][rank]),
+            "text": chunk_text
+        })
+    return results
+
+if __name__ == "__main__":
+    print("\nType your query (or 'exit' to quit):")
+    while True:
+        query = input("\nQuery: ").strip()
+        if query.lower() in {"exit", "quit"}:
+            print("Exiting retriever.")
+            break
+
+        top_results = search(query, k)
+        print(f"\nTop {len(top_results)} results for: {query}\n")
+        for r in top_results:
+            print(f"Rank {r['rank']} | Chunk ID: {r['chunk_id']} | Score: {r['score']:.4f}")
+            print(r["text"][:400], "...\n")
