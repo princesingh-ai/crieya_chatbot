@@ -33,8 +33,6 @@ async def search_problem_statements_tool(
     - ID is matched exactly
     - Other fields are matched partially
     """
-    import sys
-    print("✅ MCP TOOL CALLED", file=sys.stderr)
     filters = ProblemSearchFilters(
         problem_id=problem_id,
         title=title,
