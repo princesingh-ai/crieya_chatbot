@@ -28,7 +28,7 @@ class ProblemSearchResponse (BaseModel):
 DF = pd.read_excel("data/problem_statements.xlsx", sheet_name="Worksheet")
 
 DF = DF.rename(columns={
-    "Problem Creator's Organization": "organization",
+    "Problem Creater's Organization": "organization",
     "Technology Bucket": "technology_bucket",
     "Category": "category",
     "Description": "description",
