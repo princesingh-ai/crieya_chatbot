@@ -19,7 +19,7 @@ async def search_problem_statements_tool(
     technology_bucket: str | None = None,
     category: str | None = None,
     description: str | None = None,
-    orgranization: str | None = None,
+    organization: str | None = None,
 ):
     """
     Search SIH problem statements.
@@ -39,7 +39,7 @@ async def search_problem_statements_tool(
         technology_bucket=technology_bucket,
         category=category,
         description=description,
-        organization=orgranization,
+        organization=organization,
     )
 
     response = await run_in_thread(
