@@ -22,7 +22,7 @@ class ProblemSearchResponse (BaseModel):
     - count   : number of matching records
     - results : list of problem statement records
     """
-    count: int
+    count: int 
     results: List[Dict[str, Any]]
 
 DF = pd.read_excel("data/problem_statements.xlsx", sheet_name="Worksheet")
