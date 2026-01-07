@@ -1,41 +1,10 @@
-import pandas as pd
-from pydantic  import BaseModel
-from typing import Optional
-from typing import List, Dict, Any
+from core.models import *
+from core.loaders import load_problem_statements, load_innovation_process
 
-class ProblemSearchFilters (BaseModel):
-    """
-    Defines all optional filters that can be applied
-    while searching problem statements.
-    Each field is optional and applied only if provided.
-    """
-    problem_id: Optional[str] = None
-    title: Optional[str] = None
-    technology_bucket: Optional[str] = None
-    category: Optional[str] = None
-    description: Optional[str] = None
-    organization: Optional[str] = None
+# Load datasets 
+PS_DF = load_problem_statements()
+IP_DF = load_innovation_process()
 
-class ProblemSearchResponse (BaseModel):
-    """
-    Standard response structure for problem search.
-    - count   : number of matching records
-    - results : list of problem statement records
-    """
-    count: int 
-    results: List[Dict[str, Any]]
-
-DF = pd.read_excel("data/problem_statements.xlsx", sheet_name="Worksheet")
-
-# Rename columns for easier access
-DF = DF.rename(columns={
-    "Problem Creater's Organization": "organization",
-    "Technology Bucket": "technology_bucket",
-    "Category": "category",
-    "Description": "description",
-    "Title": "title",
-    "ID": "problem_id",
-})
 
 def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchResponse:
     """
@@ -49,7 +18,7 @@ def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchRespon
     """
 
     # Create a copy so the original DataFrame remains untouched
-    df = DF.copy()
+    df = PS_DF.copy()
 
     # Filter by exact problem ID match
     if filters.problem_id:
@@ -82,4 +51,41 @@ def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchRespon
     return ProblemSearchResponse(
         count = len(records),
         results = records
+    )
+
+
+def get_innovation_process(filters: InnovationProcessFilters) -> InnovationProcessResponse:
+    df = IP_DF.copy()
+
+    process_id = filters.process_no if filters.process_no is not None else filters.level
+    if process_id is not None:
+        df = df[df["process_no"] == process_id]
+
+    if filters.all_processes:
+        records = df[["process_no", "process_title"]].to_dict(orient="records")
+        return InnovationProcessResponse(count=len(records), results=records)
+
+    return InnovationProcessResponse(
+        count=len(df),
+        results=df.to_dict(orient="records")
+    )
+
+
+def answer_from_innovation_process(request: InnovationQARequest) -> InnovationQAResponse:
+    df = IP_DF[IP_DF["process_no"] == request.level]
+
+    if df.empty:
+        raise ValueError("Invalid innovation level")
+
+    row = df.iloc[0]
+
+    return InnovationQAResponse(
+        level=request.level,
+        process_title=row["process_title"],
+        answer_context={
+            "input": row["input"],
+            "process": row["process"],
+            "output": row["output"],
+        },
+        question=request.question,
     )

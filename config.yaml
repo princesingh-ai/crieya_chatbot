@@ -1,0 +1,9 @@
+data:
+  problem_statements:
+    path: data/problem_statements.xlsx
+    sheet: Worksheet
+
+  innovation_process:
+    path: data/crieya_innovation_process.xlsx
+    sheet: template
+    
