@@ -1,9 +1,10 @@
 from core.models import *
-from core.loaders import load_problem_statements, load_innovation_process
+from core.loaders import load_problem_statements, load_innovation_process, load_crieya_preincubation_hub
 
 # Load datasets 
 PS_DF = load_problem_statements()
 IP_DF = load_innovation_process()
+CRIEYA_HUB_DOC = load_crieya_preincubation_hub()
 
 
 def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchResponse:
@@ -69,3 +70,7 @@ def get_innovation_process(filters: InnovationProcessFilters) -> InnovationProce
         count=len(df),
         results=df.to_dict(orient="records")
     )
+
+
+def get_crieya_preincubation_hub_qa(request: CrieyaPreincubationHubQARequest) -> CrieyaPreincubationHubQAResponse:
+    return CrieyaPreincubationHubQAResponse(answer=CRIEYA_HUB_DOC, source="Crieya Pre-Incubation Hub Document")
