@@ -57,35 +57,15 @@ def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchRespon
 def get_innovation_process(filters: InnovationProcessFilters) -> InnovationProcessResponse:
     df = IP_DF.copy()
 
-    process_id = filters.process_no if filters.process_no is not None else filters.level
+    process_id = filters.process_no
     if process_id is not None:
         df = df[df["process_no"] == process_id]
 
-    if filters.all_processes:
+    if filters.stages:
         records = df[["process_no", "process_title"]].to_dict(orient="records")
         return InnovationProcessResponse(count=len(records), results=records)
 
     return InnovationProcessResponse(
         count=len(df),
         results=df.to_dict(orient="records")
-    )
-
-
-def answer_from_innovation_process(request: InnovationQARequest) -> InnovationQAResponse:
-    df = IP_DF[IP_DF["process_no"] == request.level]
-
-    if df.empty:
-        raise ValueError("Invalid innovation level")
-
-    row = df.iloc[0]
-
-    return InnovationQAResponse(
-        level=request.level,
-        process_title=row["process_title"],
-        answer_context={
-            "input": row["input"],
-            "process": row["process"],
-            "output": row["output"],
-        },
-        question=request.question,
     )
