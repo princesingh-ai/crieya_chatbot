@@ -34,3 +34,10 @@ class InnovationProcessFilters(BaseModel):
 class InnovationProcessResponse(BaseModel):
     count: int
     results: List[Dict[str, Any]]
+
+class CrieyaPreincubationHubQARequest(BaseModel):
+    question: str
+
+class CrieyaPreincubationHubQAResponse(BaseModel):
+    answer: str
+    source: str
