@@ -1,5 +1,6 @@
 import pandas as pd
 import yaml
+from pathlib import Path
 
 
 with open("config.yaml", "r") as f:
@@ -29,3 +30,7 @@ def load_innovation_process():
         "Process": "process",
         "Output": "output",
     })
+
+def load_crieya_preincubation_hub():
+    config = CONFIG["data"]["crieya_preincubation_hub"]
+    return Path(config["path"]).read_text(encoding="utf-8")
