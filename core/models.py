@@ -28,22 +28,9 @@ class ProblemSearchResponse(BaseModel):
 
 class InnovationProcessFilters(BaseModel):
     process_no: Optional[int] = None
-    level: Optional[int] = None
-    all_processes: bool = False
+    stages: bool = False
 
 
 class InnovationProcessResponse(BaseModel):
     count: int
     results: List[Dict[str, Any]]
-
-
-class InnovationQARequest(BaseModel):
-    level: int
-    question: str
-
-
-class InnovationQAResponse(BaseModel):
-    level: int
-    process_title: str
-    answer_context: Dict[str, str]
-    question: str
