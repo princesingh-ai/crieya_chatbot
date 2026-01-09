@@ -24,6 +24,7 @@ utils/threading.py
 data/
 data/crieya_innovation_process.xlsx
 data/problem_statements.xlsx
+crieya_preincubation_hub.txt
 
 # Notebooks
 notebook.ipynb
@@ -41,4 +42,5 @@ uv.lock
 # OS / editor junk
 .DS_Store
 
+# MCP tool
 main.py
