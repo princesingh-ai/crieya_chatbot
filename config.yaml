@@ -6,4 +6,6 @@ data:
   innovation_process:
     path: data/crieya_innovation_process.xlsx
     sheet: template
-    
+
+  crieya_preincubation_hub:
+    path: data/crieya_preincubation_hub.txt
