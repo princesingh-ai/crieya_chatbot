@@ -1,5 +1,5 @@
 from core.models import *
-from core.loaders import load_problem_statements, load_innovation_process, load_crieya_preincubation_hub
+from core.loaders import load_problem_statements, load_innovation_process, load_crieya_preincubation_hub, load_crieya_focus
 
 # Load datasets 
 PS_DF = load_problem_statements()
@@ -74,3 +74,12 @@ def get_innovation_process(filters: InnovationProcessFilters) -> InnovationProce
 
 def get_crieya_preincubation_hub_qa(request: CrieyaPreincubationHubQARequest) -> CrieyaPreincubationHubQAResponse:
     return CrieyaPreincubationHubQAResponse(answer=CRIEYA_HUB_DOC, source="Crieya Pre-Incubation Hub Document")
+
+
+def get_crieya_focus_qa(request: CrieyaFocusQARequest) -> CrieyaFocusQAResponse:
+    text = load_crieya_focus()
+
+    return CrieyaFocusQAResponse(
+        answer=text,
+        source="CRiEYA Focus Document"
+    )
