@@ -9,3 +9,6 @@ data:
 
   crieya_preincubation_hub:
     path: data/crieya_preincubation_hub.txt
+  
+  crieya_focus:
+    path: data/crieya_focus.txt
