@@ -1,6 +1,6 @@
 from fastmcp import FastMCP
-from core.models import (ProblemSearchFilters,InnovationProcessFilters, CrieyaPreincubationHubQARequest)
-from core.services import (get_problem_statements,get_innovation_process, get_crieya_preincubation_hub_qa)
+from core.models import (ProblemSearchFilters,InnovationProcessFilters, CrieyaPreincubationHubQARequest, CrieyaFocusQARequest)
+from core.services import (get_problem_statements,get_innovation_process, get_crieya_preincubation_hub_qa, get_crieya_focus_qa)
 from utils.threading import run_in_thread
 
 mcp = FastMCP(name="crieya-chatbot")
@@ -53,6 +53,19 @@ async def crieya_preincubation_hub_qa_tool(request:CrieyaPreincubationHubQAReque
         request
     )
     return response.model_dump()
+
+@mcp.tool()
+async def crieya_focus_tool(request: CrieyaFocusQARequest):
+    """
+    Answer questions about CRiEYA focus areas:
+    domains, technologies, practice areas, objectives.
+    """
+    response = await run_in_thread(
+        get_crieya_focus_qa,
+        request
+    )
+    return response.model_dump()
+
 
 if __name__ == "__main__":
     mcp.run()
