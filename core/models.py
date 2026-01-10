@@ -41,3 +41,11 @@ class CrieyaPreincubationHubQARequest(BaseModel):
 class CrieyaPreincubationHubQAResponse(BaseModel):
     answer: str
     source: str
+
+class CrieyaFocusQARequest(BaseModel):
+    question: str
+
+
+class CrieyaFocusQAResponse(BaseModel):
+    answer: str
+    source: str
