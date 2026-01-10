@@ -34,3 +34,7 @@ def load_innovation_process():
 def load_crieya_preincubation_hub():
     config = CONFIG["data"]["crieya_preincubation_hub"]
     return Path(config["path"]).read_text(encoding="utf-8")
+
+def load_crieya_focus():
+    path = CONFIG["data"]["crieya_focus"]["path"]
+    return Path(path).read_text(encoding="utf-8")
