@@ -49,3 +49,10 @@ class CrieyaFocusQARequest(BaseModel):
 class CrieyaFocusQAResponse(BaseModel):
     answer: str
     source: str
+
+class TrlLevelRequest(BaseModel):
+    question: str
+
+class TrlLevelResponse(BaseModel):
+    answer: str
+    source: str
