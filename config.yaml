@@ -12,3 +12,6 @@ data:
   
   crieya_focus:
     path: data/crieya_focus.txt
+
+  trl_levels:
+    path: data/trl_levels.txt
