@@ -5,20 +5,15 @@ from core.loaders import load_problem_statements, load_innovation_process, load_
 PS_DF = load_problem_statements()
 IP_DF = load_innovation_process()
 CRIEYA_HUB_DOC = load_crieya_preincubation_hub()
+CRIEYA_FOCUS = load_crieya_focus()
 TRL_LEVELS = load_trl_levels()
 
 
 def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchResponse:
     """
-    Filters problem statements based on provided search criteria.
-
-    Args:
-        filters (ProblemSearchFilters): Search parameters sent by client
-
-    Returns:
-        ProblemSearchResponse: Matching problem statements and count
+    Search SIH problem statements using optional filters.
+    Exact match is used for problem_id, others are partial and case-insensitive.
     """
-
     # Create a copy so the original DataFrame remains untouched
     df = PS_DF.copy()
 
@@ -57,6 +52,10 @@ def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchRespon
 
 
 def get_innovation_process(filters: InnovationProcessFilters) -> InnovationProcessResponse:
+    """
+    Retrieve innovation process data.
+    Can return full steps or only stage numbers and titles.
+    """
     df = IP_DF.copy()
 
     process_id = filters.process_no
@@ -74,18 +73,25 @@ def get_innovation_process(filters: InnovationProcessFilters) -> InnovationProce
 
 
 def get_crieya_preincubation_hub_qa(request: CrieyaPreincubationHubQARequest) -> CrieyaPreincubationHubQAResponse:
+    """
+    Return CRIEYA pre-incubation hub information.
+    """
     return CrieyaPreincubationHubQAResponse(answer=CRIEYA_HUB_DOC, source="Crieya Pre-Incubation Hub Document")
 
 
 def get_crieya_focus_qa(request: CrieyaFocusQARequest) -> CrieyaFocusQAResponse:
-    text = load_crieya_focus()
-
+    """
+    Return CRIEYA focus areas and technologies.
+    """
     return CrieyaFocusQAResponse(
-        answer=text,
+        answer=CRIEYA_FOCUS,
         source="CRiEYA Focus Document"
     )
 
 def get_trl_levels(request: TrlLevelRequest) -> TrlLevelResponse:
+    """
+    Return Technology Readiness Level (TRL) definitions.
+    """
     return TrlLevelResponse(
         answer=TRL_LEVELS,
         source="TRL Levels Document"
