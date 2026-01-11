@@ -38,3 +38,7 @@ def load_crieya_preincubation_hub():
 def load_crieya_focus():
     path = CONFIG["data"]["crieya_focus"]["path"]
     return Path(path).read_text(encoding="utf-8")
+
+def load_trl_levels():
+    config = CONFIG["data"]["trl_levels"]
+    return Path(config["path"]).read_text(encoding="utf-8")
