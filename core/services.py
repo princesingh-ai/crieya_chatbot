@@ -1,10 +1,11 @@
 from core.models import *
-from core.loaders import load_problem_statements, load_innovation_process, load_crieya_preincubation_hub, load_crieya_focus
+from core.loaders import load_problem_statements, load_innovation_process, load_crieya_preincubation_hub, load_crieya_focus, load_trl_levels
 
 # Load datasets 
 PS_DF = load_problem_statements()
 IP_DF = load_innovation_process()
 CRIEYA_HUB_DOC = load_crieya_preincubation_hub()
+TRL_LEVELS = load_trl_levels()
 
 
 def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchResponse:
@@ -82,4 +83,10 @@ def get_crieya_focus_qa(request: CrieyaFocusQARequest) -> CrieyaFocusQAResponse:
     return CrieyaFocusQAResponse(
         answer=text,
         source="CRiEYA Focus Document"
+    )
+
+def get_trl_levels(request: TrlLevelRequest) -> TrlLevelResponse:
+    return TrlLevelResponse(
+        answer=TRL_LEVELS,
+        source="TRL Levels Document"
     )
