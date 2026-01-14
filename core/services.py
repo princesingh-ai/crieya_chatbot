@@ -14,9 +14,7 @@ def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchRespon
     Search SIH problem statements using optional filters.
     Exact match is used for problem_id, others are partial and case-insensitive.
     """
-    # Create a copy so the original DataFrame remains untouched
-    df = PS_DF.copy()
-
+    df = PS_DF
     # Filter by exact problem ID match
     if filters.problem_id:
         df = df[df["problem_id"].astype(str) == filters.problem_id]
