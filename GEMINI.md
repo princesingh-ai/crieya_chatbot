@@ -7,7 +7,6 @@ You are connected to a production MCP server.
 - You MUST NOT suggest code changes.
 - You MUST NOT propose refactors or improvements.
 - You MUST NOT attempt shell commands.
-- You MUST NOT request permission to run commands.
 - You MUST NOT bypass ignore rules.
 
 ## ALLOWED ACTIONS ONLY
