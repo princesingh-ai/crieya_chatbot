@@ -1,5 +1,6 @@
+import pandas as pd
 from core.models import *
-from core.loaders import load_problem_statements, load_innovation_process, load_crieya_preincubation_hub, load_crieya_focus, load_trl_levels
+from core.loaders import load_problem_statements, load_innovation_process, load_crieya_preincubation_hub, load_crieya_focus, load_trl_levels, load_annexure_registry
 
 # Load datasets 
 PS_DF = load_problem_statements()
@@ -7,7 +8,7 @@ IP_DF = load_innovation_process()
 CRIEYA_HUB_DOC = load_crieya_preincubation_hub()
 CRIEYA_FOCUS = load_crieya_focus()
 TRL_LEVELS = load_trl_levels()
-
+ANNEXURE_REGISTRY_DF = load_annexure_registry()
 
 def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchResponse:
     """
@@ -93,4 +94,27 @@ def get_trl_levels(request: TrlLevelRequest) -> TrlLevelResponse:
     return TrlLevelResponse(
         answer=TRL_LEVELS,
         source="TRL Levels Document"
+    )
+
+def get_annexure_registry(request: AnnexureRegistryRequest) -> AnnexureRegistryResponse:
+    df = ANNEXURE_REGISTRY_DF
+
+    if request.annexure_id:
+        df = df[df["annexure_id"] == request.annexure_id.upper().strip()]
+
+    if request.keyword:
+        df = df[df.apply(lambda row: row.astype(str).str.contains(request.keyword, case=False, na=False).any(), axis=1)]
+
+    results = [
+        AnnexureRegistry(
+            annexure_id=row["annexure_id"],
+            title=row["title"],
+            file_name=row["file_name"],
+            url=None if pd.isna(row.get("url")) else row.get("url")
+        )for _, row in df.iterrows()
+    ]
+
+    return AnnexureRegistryResponse(
+        count=len(results),
+        results=results,
     )
