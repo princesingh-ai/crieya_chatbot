@@ -1,6 +1,6 @@
 from fastmcp import FastMCP
-from core.models import (ProblemSearchFilters,InnovationProcessFilters, CrieyaPreincubationHubQARequest, CrieyaFocusQARequest, TrlLevelRequest)
-from core.services import (get_problem_statements,get_innovation_process, get_crieya_preincubation_hub_qa, get_crieya_focus_qa, get_trl_levels)
+from core.models import (ProblemSearchFilters,InnovationProcessFilters, CrieyaPreincubationHubQARequest, CrieyaFocusQARequest, TrlLevelRequest, AnnexureRegistryRequest)
+from core.services import (get_problem_statements,get_innovation_process, get_crieya_preincubation_hub_qa, get_crieya_focus_qa, get_trl_levels, get_annexure_registry)
 from utils.threading import run_in_thread
 
 mcp = FastMCP(name="crieya-chatbot")
@@ -74,6 +74,21 @@ async def trl_levels_tool(request: TrlLevelRequest):
     """
     response = await run_in_thread(
         get_trl_levels,
+        request
+    )
+    return response.model_dump()
+
+@mcp.tool()
+async def annexure_registry_tool(request: AnnexureRegistryRequest):
+    """
+    Retrieve annexure documents by ID or keyword.
+
+    Examples:
+    - "Give me Annexure F"
+    - "Evaluation guideline annexure"
+    """
+    response = await run_in_thread(
+        get_annexure_registry,
         request
     )
     return response.model_dump()
