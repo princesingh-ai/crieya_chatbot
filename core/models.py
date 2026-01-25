@@ -56,3 +56,17 @@ class TrlLevelRequest(BaseModel):
 class TrlLevelResponse(BaseModel):
     answer: str
     source: str
+
+class AnnexureRegistry(BaseModel):
+    annexure_id: str
+    title: str
+    file_name: str
+    url: Optional[str]
+
+class AnnexureRegistryRequest(BaseModel):
+    annexure_id: Optional[str] = None
+    keyword: Optional[str] = None
+
+class AnnexureRegistryResponse(BaseModel):
+    count: int
+    results: List[AnnexureRegistry]
