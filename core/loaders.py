@@ -47,10 +47,3 @@ def load_trl_levels():
     """Load Technology Readiness Levels (TRL) text."""
     config = CONFIG["data"]["trl_levels"]
     return Path(config["path"]).read_text(encoding="utf-8")
-
-def load_annexure_registry():
-    """Load Annexure registry data from Excel."""
-    config = CONFIG["data"]["annexure_registry"]
-    df = pd.read_excel(config["path"])
-    df["annexure_id"] = df ["annexure_id"].astype(str).str.upper().str.strip()
-    return df
