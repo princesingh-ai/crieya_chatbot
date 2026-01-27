@@ -15,6 +15,3 @@ data:
 
   trl_levels:
     path: data/trl_levels.txt
-
-  annexure_registry:
-    path: data/annexure_registry.xlsx
