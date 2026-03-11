@@ -1,6 +1,6 @@
 import pandas as pd
 from core.models import *
-from core.loaders import load_problem_statements, load_innovation_process, load_crieya_preincubation_hub, load_crieya_focus, load_trl_levels, load_aic_guidelines
+from core.loaders import load_problem_statements, load_innovation_process, load_crieya_preincubation_hub, load_crieya_focus, load_trl_levels
 
 # Load datasets 
 PS_DF = load_problem_statements()
@@ -8,7 +8,6 @@ IP_DF = load_innovation_process()
 CRIEYA_HUB_DOC = load_crieya_preincubation_hub()
 CRIEYA_FOCUS = load_crieya_focus()
 TRL_LEVELS = load_trl_levels()
-AIC_GUIDELINES = load_aic_guidelines()
 
 def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchResponse:
     """
@@ -101,29 +100,4 @@ def get_trl_levels(request: TrlLevelRequest) -> TrlLevelResponse:
     return TrlLevelResponse(
         answer=TRL_LEVELS,
         source="TRL Levels Document"
-    )
-
-def get_aic_guidelines(request: AicGuidelinesRequest) -> AicGuidelinesResponse:
-    data = AIC_GUIDELINES
-    sections = data.get("sections", {})
-    
-    results = []
-
-    for section_name, content in sections.items():
-
-        if request.section:
-            if request.section.lower() not in section_name.lower():
-                continue
-
-        if request.keyword:
-            keyword = request.keyword.lower()
-            content_str = str(content).lower()
-            if keyword not in content_str:
-                continue
-
-        results.append(AicGuidelinesSection(section_name=section_name, content=content))
-
-    return AicGuidelinesResponse(
-        count=len(results),
-        results=results
     )
