@@ -1,7 +1,6 @@
 import pandas as pd
 import yaml
 from pathlib import Path
-import json
 
 
 with open("config.yaml", "r") as f:
@@ -48,8 +47,3 @@ def load_trl_levels():
     """Load Technology Readiness Levels (TRL) text."""
     config = CONFIG["data"]["trl_levels"]
     return Path(config["path"]).read_text(encoding="utf-8")
-
-def load_aic_guidelines():
-    config = CONFIG["data"]["aic_guidelines"]
-    with open(config["path"], "r", encoding="utf-8") as f:
-        return json.load(f)
