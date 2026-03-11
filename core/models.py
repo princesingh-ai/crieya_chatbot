@@ -56,16 +56,3 @@ class TrlLevelRequest(BaseModel):
 class TrlLevelResponse(BaseModel):
     answer: str
     source: str
-
-class AicGuidelinesRequest(BaseModel):
-    section: Optional[str] = None
-    keyword: Optional[str] = None
-
-class AicGuidelinesSection(BaseModel):
-    section_name: str
-    content: Any
-
-class AicGuidelinesResponse(BaseModel):
-    count: int
-    results: List[AicGuidelinesSection]
-    source: str = "AIC_Guidelines Seed Fund Scheme Document"
