@@ -1,6 +1,6 @@
 from fastmcp import FastMCP
-from core.models import (ProblemSearchFilters,InnovationProcessFilters, CrieyaPreincubationHubQARequest, CrieyaFocusQARequest, TrlLevelRequest, AicGuidelinesRequest)
-from core.services import (get_problem_statements,get_innovation_process, get_crieya_preincubation_hub_qa, get_crieya_focus_qa, get_trl_levels, get_aic_guidelines)
+from core.models import (ProblemSearchFilters,InnovationProcessFilters, CrieyaPreincubationHubQARequest, CrieyaFocusQARequest, TrlLevelRequest)
+from core.services import (get_problem_statements,get_innovation_process, get_crieya_preincubation_hub_qa, get_crieya_focus_qa, get_trl_levels)
 from utils.threading import run_in_thread
 
 mcp = FastMCP(name="crieya-chatbot")
@@ -74,29 +74,6 @@ async def trl_levels_tool(request: TrlLevelRequest):
     """
     response = await run_in_thread(
         get_trl_levels,
-        request
-    )
-    return response.model_dump()
-
-@mcp.tool()
-async def aid_guidelines_tool(request: AicGuidelinesRequest):
-    """
-Structured reference dataset for the "Guidelines for Startup India Seed Fund Scheme (SISFS)".
-
-Contains policy definitions, eligibility criteria, funding rules, selection processes,
-governance structure, and fund utilization guidelines.
-
-Data Format:
-- title: Document name
-- sections: Topic-organized content (strings, lists, nested objects)
-
-Intended Use:
-- Section retrieval
-- Eligibility and compliance queries
-- Semantic search / embeddings / chunked reasoning
-"""
-    response = await run_in_thread(
-        get_aic_guidelines,
         request
     )
     return response.model_dump()
