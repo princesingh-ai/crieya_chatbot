@@ -6,7 +6,7 @@ from asyncio import to_thread
 mcp = FastMCP(name="crieya-chatbot")
 
 @mcp.tool()
-async def search_problem_statements_tool(filters: ProblemSearchFilters):
+async def search_problem_statements(filters: ProblemSearchFilters):
     """
     Search SIH problem statements.
 
@@ -79,4 +79,5 @@ async def trl_levels_tool(request: TrlLevelRequest):
     return response.model_dump()
 
 if __name__ == "__main__":
-    mcp.run()
+    # SSE transport - use HTTP instead for new projects
+    mcp.run(transport="sse", host="127.0.0.1", port=8000)
