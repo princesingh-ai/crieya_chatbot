@@ -14,12 +14,24 @@ async def search_problem_statements(filters: ProblemSearchFilters):
     - "farming related technology bucket"
     - "problem with ID SIH1524"
     - "AI problems from ISRO"
+    - "problem id 1524"
+
+    Supports:
+    - Exact ID matching
+    - Partial matching across other fields
+
+    ID Handling:
+    - If the query contains a 4-digit number referring to a problem ID
+    (e.g., "id 1524", "problem 1524", "problem statement 1524"),
+    automatically prepend "SIH" to the number
+    → Example: 1524 → SIH1524
+
+    - If "SIH" is already present, use the ID as-is
 
     Notes:
-    - ID is matched exactly
+    - ID matching is exact after normalization
     - Other fields are matched partially
     """
-
     response = await to_thread(
         get_problem_statements,
         filters
@@ -29,13 +41,26 @@ async def search_problem_statements(filters: ProblemSearchFilters):
 @mcp.tool()
 async def innovation_process_tool(filters: InnovationProcessFilters):
     """
-    Retrieve CRiEYA innovation process data.
+    Retrieve CRiEYA innovation process data and annexures.
 
     Supports:
-    - Specific process by number or level
-    - Listing all process titles
-    """
-    
+    - Fetching a specific innovation process by:
+        • Process number (e.g., 1, 2, 3...)
+
+    - Retrieving the full innovation process:
+        • Returns all processes with complete details when requested
+
+    - Listing all innovation process titles
+
+    - Retrieving annexure-related information:
+        • Supports Annexures A through J
+        • If a query mentions an annexure (e.g., "Annexure A", "Annexure D"),
+        return all relevant details and associated data
+
+    - Combined queries:
+        • Handles queries that reference both process data and annexures
+        • Example: "Process 2 with Annexure B"
+    """  
     response = await to_thread(
         get_innovation_process,
         filters
