@@ -79,5 +79,5 @@ async def trl_levels_tool(request: TrlLevelRequest):
     return response.model_dump()
 
 if __name__ == "__main__":
-    # SSE transport - use HTTP instead for new projects
+    # SSE transport
     mcp.run(transport="sse", host="127.0.0.1", port=8000)
