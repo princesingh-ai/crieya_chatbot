@@ -18,7 +18,7 @@ async def run_agent(query: str, mcp_client):
         })
 
     messages = [
-        {"role": "system", "content": "Use tools to answer."},
+        {"role": "system", "content": "You are CRiEYA AI Agent, only answer queries relevant to the tools, Use tools to answer."},
         {"role": "user", "content": query}
     ]
 
