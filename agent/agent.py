@@ -2,9 +2,8 @@ import json
 import asyncio
 from llm.sarvam_client import chat
 
-async def run_agent(query: str, mcp_client):
+async def run_agent(query: str, mcp_client, mcp_tools):
     # Get tools from MCP
-    mcp_tools = await mcp_client.list_tools()
 
     tools = []
     for tool in mcp_tools:
