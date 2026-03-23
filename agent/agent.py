@@ -17,11 +17,16 @@ async def run_agent(query: str, mcp_client, mcp_tools):
         })
 
     messages = [
-        {"role": "system", "content": "You are CRiEYA AI Agent, only answer queries relevant to the tools, Use tools to answer."},
+        {"role": "system", "content":  "You are the CRIEYA AI Agent. "
+        "Always call tools using correct JSON format based on their parameters. "
+        "Arguments MUST be valid JSON objects matching the tool schema. "
+        "Do not pass raw strings as arguments."},
         {"role": "user", "content": query}
     ]
 
-    while True:
+    MAX_STEPS = 5
+
+    for step in range(MAX_STEPS):
         response = await asyncio.to_thread(chat, messages, tools)
         message = response.choices[0].message
 
