@@ -5,7 +5,7 @@ from agent.agent import run_agent
 async def main():
     print("Connecting to MCP server...")
 
-    async with Client("http://127.0.0.1:8000/sse") as client:
+    async with Client("http://127.0.0.1:8000/mcp") as client:
         print("Welcome to the CRIEYA Assistant! Type 'exit' or 'quit' to stop.")
 
         mcp_tools = await client.list_tools()
