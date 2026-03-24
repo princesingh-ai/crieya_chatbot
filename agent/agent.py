@@ -43,6 +43,9 @@ async def run_agent(query: str, mcp_client, mcp_tools):
 
         # execute tools
         for tool_call in message.tool_calls:
+            print(f"Tool called: {tool_call.function.name}")
+            print(f"Arguments: {tool_call.function.arguments}")
+
             result = await mcp_client.call_tool(
                 tool_call.function.name,
                 json.loads(tool_call.function.arguments)
