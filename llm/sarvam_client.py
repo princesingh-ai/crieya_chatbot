@@ -1,6 +1,10 @@
 import os
 from dotenv import load_dotenv
 from sarvamai import SarvamAI
+from core.loaders import load_config
+
+config = load_config()
+model_name = config["model"]["name"]
 
 load_dotenv()
 
@@ -10,12 +14,4 @@ client = SarvamAI(
 
 
 def chat(messages, tools=None):
-    request = {
-        "model": "sarvam-105b",
-        "messages": messages,
-    }
-
-    if tools:
-        request["tools"] = tools
-
-    return client.chat.completions(**request)
+    return client.chat.completions(model=model_name, messages=messages, tools=tools)
