@@ -43,23 +43,52 @@ async def innovation_process_tool(filters: InnovationProcessFilters):
     """
     Retrieve CRiEYA innovation process data and annexures.
 
-    Supports:
-    - Fetching a specific innovation process by:
-        • Process number (e.g., 1, 2, 3...)
+    This tool contains and retrieves structured information about the complete
+    CRiEYA innovation lifecycle, including all process stages and supporting annexures.
 
-    - Retrieving the full innovation process:
-        • Returns all processes with complete details when requested
+    Innovation Process Flow:
+    1. Call for Application by CRiEYA Co-ordinators (the first stage of the innovation process where potential innovators are formally invited to submit their ideas or project proposals.)
+    2. Innovation Projects Screening at Institute/Department internal level (Level 1)
+    3. Innovation Projects Screening by External Steering Committee/Industry Experts (Level 2)
+    4. Funding Evaluation by CRiEYA Seed Management Committee (CSMC) (Level 3)
+    5. Innovation Projects On-boarding by Team CRiEYA
+    6. Project Execution and Operations by Institute/Department Co-ordinator,
+       Principal Investigator, and Students
+    7. Role of Project Mentoring and Monitoring Committee
+    8. Innovation Projects Closure as per work status
+    9. Project Closure
 
-    - Listing all innovation process titles
+    Capabilities:
+    - Fetch a specific innovation process by process number
+    - Retrieve the complete innovation process (all stages)
+    - List all innovation process titles
+    - Retrieve annexures (Annexure A to Annexure J)
+    - Handle combined queries (e.g., "Process 2 with Annexure B")
 
-    - Retrieving annexure-related information:
-        • Supports Annexures A through J
-        • If a query mentions an annexure (e.g., "Annexure A", "Annexure D"),
-        return all relevant details and associated data
+    Args:
+        filters (InnovationProcessFilters):
+            Input filters used to query the innovation process data. May include:
+            - process_number (int): Specific process stage number
+            - annexure (str): Annexure identifier (e.g., "A", "B", ..., "J")
+            - query_type (str): Type of request (e.g., "full", "titles", "specific", "annexure")
+            - additional flags depending on schema
 
-    - Combined queries:
-        • Handles queries that reference both process data and annexures
-        • Example: "Process 2 with Annexure B"
+    Parameters Context:
+        - If process_number is provided → returns that specific stage
+        - If annexure is provided → returns annexure details
+        - If both are provided → returns combined results
+        - If no filters → returns full innovation process
+
+    Returns:
+        dict:
+            A structured JSON response containing:
+            - process details (title, description, stage info)
+            - annexure details (if requested)
+            - full workflow data (if requested)
+            - or filtered results based on input
+
+    Notes:
+        - This tool is the source of truth for CRiEYA innovation workflow data
     """  
     response = await to_thread(
         get_innovation_process,
@@ -70,8 +99,32 @@ async def innovation_process_tool(filters: InnovationProcessFilters):
 @mcp.tool()
 async def crieya_preincubation_hub_qa_tool(request:CrieyaPreincubationHubQARequest):
     """
-    Answer questions about CRiEYA as an institution:
-    identity, affiliation, funding, impact, programs, patents, startups.
+    Retrieve structured information about the CRiEYA Pre-incubation Hub.
+
+    Args:
+        request (CrieyaPreincubationHubQARequest):
+            An object containing the query parameters for retrieval.
+            Expected fields:
+            - query (str): The user’s question or topic to search for
+
+    Returns:
+        dict:
+            A structured JSON object containing retrieved information.
+            Typical structure:
+            {
+                "results": [
+                    {
+                        "title": str,
+                        "content": str,
+                        "source": str (optional),
+                    }
+                ]
+            }
+
+    Notes:
+        - This tool ONLY retrieves factual data from CRiEYA documentation.
+        - It does NOT generate final answers.
+        - The calling agent must interpret and synthesize the response.
     """
     response = await to_thread(
         get_crieya_preincubation_hub_qa,
@@ -82,8 +135,37 @@ async def crieya_preincubation_hub_qa_tool(request:CrieyaPreincubationHubQAReque
 @mcp.tool()
 async def crieya_focus_tool(request: CrieyaFocusQARequest):
     """
-    Answer questions about CRiEYA focus areas:
-    domains, technologies, practice areas, objectives.
+    Retrieve structured information about CRiEYA focus areas.
+
+    This includes:
+    - domains
+    - technologies
+    - practice areas
+    - objectives
+
+    Args:
+        request (CrieyaFocusQARequest):
+            Query parameters for retrieving focus-related data.
+            Expected fields:
+            - query (str): Topic or question about focus areas
+
+    Returns:
+        dict:
+            Structured data containing relevant focus area information.
+            Example:
+            {
+                "results": [
+                    {
+                        "title": str,
+                        "content": str,
+                    }
+                ]
+            }
+
+    Notes:
+        - This tool retrieves factual data only.
+        - It does NOT generate final answers.
+        - The calling agent must interpret and synthesize the response.
     """
     response = await to_thread(
         get_crieya_focus_qa,
@@ -94,8 +176,38 @@ async def crieya_focus_tool(request: CrieyaFocusQARequest):
 @mcp.tool()
 async def trl_levels_tool(request: TrlLevelRequest):
     """
-    Provide information on Technology Readiness Levels (TRL):
-    definitions, criteria, etc.
+    Retrieve structured information about Technology Readiness Levels (TRL).
+
+    This includes:
+    - definitions of each TRL level
+    - evaluation criteria
+    - characteristics of maturity stages
+
+    Args:
+        request (TrlLevelRequest):
+            Query parameters for TRL-related retrieval.
+            Expected fields:
+            - query (str): Specific TRL question or level (e.g., "TRL 5 meaning")
+            - level (optional, int): Specific TRL level (1–9)
+
+    Returns:
+        dict:
+            Structured TRL information.
+            Example:
+            {
+                "results": [
+                    {
+                        "level": int,
+                        "title": str,
+                        "description": str,
+                    }
+                ]
+            }
+
+    Notes:
+        - This tool only retrieves TRL data.
+        - It does NOT generate final answers.
+        - The calling agent must synthesize the final response.
     """
     response = await to_thread(
         get_trl_levels,
