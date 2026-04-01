@@ -36,7 +36,7 @@ async def search_problem_statements(filters: ProblemSearchFilters):
         get_problem_statements,
         filters
     )
-    return response.model_dump()
+    return response
 
 @mcp.tool()
 async def innovation_process_tool(filters: InnovationProcessFilters):
@@ -94,7 +94,7 @@ async def innovation_process_tool(filters: InnovationProcessFilters):
         get_innovation_process,
         filters
     )
-    return response.model_dump()
+    return response
 
 @mcp.tool()
 async def crieya_preincubation_hub_qa_tool(request:CrieyaPreincubationHubQARequest):
@@ -130,7 +130,7 @@ async def crieya_preincubation_hub_qa_tool(request:CrieyaPreincubationHubQAReque
         get_crieya_preincubation_hub_qa,
         request
     )
-    return response.model_dump()
+    return response
 
 @mcp.tool()
 async def crieya_focus_tool(request: CrieyaFocusQARequest):
@@ -171,7 +171,7 @@ async def crieya_focus_tool(request: CrieyaFocusQARequest):
         get_crieya_focus_qa,
         request
     )
-    return response.model_dump()
+    return response
 
 @mcp.tool()
 async def trl_levels_tool(request: TrlLevelRequest):
@@ -213,7 +213,7 @@ async def trl_levels_tool(request: TrlLevelRequest):
         get_trl_levels,
         request
     )
-    return response.model_dump()
+    return response
 
 if __name__ == "__main__":
     # HTTP transport
