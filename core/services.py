@@ -9,7 +9,7 @@ CRIEYA_HUB_DOC = load_crieya_preincubation_hub()
 CRIEYA_FOCUS = load_crieya_focus()
 TRL_LEVELS = load_trl_levels()
 
-def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchResponse:
+def get_problem_statements(filters: ProblemSearchFilters):
     """
     Search SIH problem statements using optional filters.
     Exact match is used for problem_id, others are partial and case-insensitive.
@@ -42,14 +42,13 @@ def get_problem_statements(filters: ProblemSearchFilters) -> ProblemSearchRespon
     # Convert filtered DataFrame into list of dictionaries
     records = df.to_dict(orient="records")
 
-    # Return structured response
-    return ProblemSearchResponse(
-        count = len(records),
-        results = records
-    )
+    return {
+        "count": len(records),
+        "results": records
+    }
 
 
-def get_innovation_process(filters: InnovationProcessFilters) -> InnovationProcessResponse:
+def get_innovation_process(filters: InnovationProcessFilters):
     df = IP_DF
 
     if filters.process_no is not None:
@@ -57,7 +56,10 @@ def get_innovation_process(filters: InnovationProcessFilters) -> InnovationProce
 
     if filters.stages is True and filters.field is None:
         records = df[["process_no", "process_title"]].to_dict(orient="records")
-        return InnovationProcessResponse(count=len(records), results=records)
+        return {
+        "count": len(records),
+        "results": records
+        }
     
     if filters.field == "title":
         df = df[["process_no", "process_title"]]
@@ -71,33 +73,38 @@ def get_innovation_process(filters: InnovationProcessFilters) -> InnovationProce
     elif filters.field == "output":
         df = df[["process_no", "output"]]
 
-    return InnovationProcessResponse(
-        count=len(df),
-        results=df.to_dict(orient="records")
-    )
+    records = df.to_dict(orient="records")
+
+    return {
+        "count": len(records),
+        "results": records
+    }
 
 
-def get_crieya_preincubation_hub_qa(request: CrieyaPreincubationHubQARequest) -> CrieyaPreincubationHubQAResponse:
+def get_crieya_preincubation_hub_qa(request: CrieyaPreincubationHubQARequest):
     """
     Return CRIEYA pre-incubation hub information.
     """
-    return CrieyaPreincubationHubQAResponse(answer=CRIEYA_HUB_DOC, source="Crieya Pre-Incubation Hub Document")
+    return {
+        "answer": CRIEYA_HUB_DOC,
+        "source": "Crieya Pre-Incubation Hub Document"
+    }
 
 
-def get_crieya_focus_qa(request: CrieyaFocusQARequest) -> CrieyaFocusQAResponse:
+def get_crieya_focus_qa(request: CrieyaFocusQARequest):
     """
     Return CRIEYA focus areas and technologies.
     """
-    return CrieyaFocusQAResponse(
-        answer=CRIEYA_FOCUS,
-        source="CRiEYA Focus Document"
-    )
+    return {
+        "answer": CRIEYA_FOCUS,
+        "source": "CRiEYA Focus Document"
+    }
 
-def get_trl_levels(request: TrlLevelRequest) -> TrlLevelResponse:
+def get_trl_levels(request: TrlLevelRequest):
     """
     Return Technology Readiness Level (TRL) definitions.
     """
-    return TrlLevelResponse(
-        answer=TRL_LEVELS,
-        source="TRL Levels Document"
-    )
+    return {
+        "answer": TRL_LEVELS,
+        "source": "TRL Levels Document"
+    }
