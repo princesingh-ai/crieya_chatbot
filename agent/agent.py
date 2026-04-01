@@ -2,60 +2,79 @@ import json
 import asyncio
 from llm.sarvam_client import chat
 
-async def run_agent(query: str, mcp_client, mcp_tools):
-    # Get tools from MCP
 
-    tools = []
-    for tool in mcp_tools:
-        tools.append({
+async def run_agent(query: str, mcp_client, mcp_tools):
+    # Convert tools to LLM schema
+    tools = [
+        {
             "type": "function",
             "function": {
                 "name": tool.name,
                 "description": tool.description,
                 "parameters": tool.inputSchema
             }
-        })
-
-    messages = [
-        {"role": "system", "content":  "You are the CRIEYA AI Agent. "
-        "Always call tools using correct JSON format based on their parameters. "
-        "Arguments MUST be valid JSON objects matching the tool schema. "
-        "Do not pass raw strings as arguments."},
-        {"role": "user", "content": query}
+        }
+        for tool in mcp_tools
     ]
 
-    MAX_STEPS = 5
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are the CRIEYA AI Agent.\n"
+                "Use tools ONLY when necessary to retrieve factual data.\n"
+                "After you have enough information, you MUST stop calling tools and provide a final answer.\n"
+                "Do NOT call tools repeatedly for the same information.\n"
+                "Always synthesize tool results into a clear final answer.\n"
+            )
+        },
+        {
+            "role": "user",
+            "content": query
+        }
+    ]
 
-    for step in range(MAX_STEPS):
+    max_steps = 6
+
+    for step in range(max_steps):
         response = await asyncio.to_thread(chat, messages, tools)
-        message = response.choices[0].message
+        msg = response.choices[0].message
 
-        # add assistant message
         messages.append({
             "role": "assistant",
-            "content": message.content,
-            "tool_calls": message.tool_calls
+            "content": msg.content,
+            "tool_calls": msg.tool_calls
         })
 
-        # if no tool call -> return answer
-        if not message.tool_calls:
-            return message.content
+        # Final answer
+        if not msg.tool_calls:
+            return msg.content or "No response generated."
 
-        # execute tools
-        for tool_call in message.tool_calls:
-            print(f"Tool called: {tool_call.function.name}")
-            print(f"Arguments: {tool_call.function.arguments}")
+        # Execute tools
+        for call in msg.tool_calls:
+            tool_name = call.function.name
+            raw_args = call.function.arguments
 
-            result = await mcp_client.call_tool(
-                tool_call.function.name,
-                json.loads(tool_call.function.arguments)
-            )
+            try:
+                args = json.loads(raw_args) if raw_args else {}
+            except:
+                args = {}
 
-            texts = [c.text for c in result.content if getattr(c, "type", None) == "text"]
+            try:
+                result = await mcp_client.call_tool(tool_name, args)
+                output = "\n".join(
+                    content.text for content in result.content
+                    if getattr(content, "type", None) == "text"
+                )
+            except Exception as e:
+                output = f"Error: {str(e)}"
 
             messages.append({
                 "role": "tool",
-                "tool_call_id": tool_call.id,
-                "name": tool_call.function.name,
-                "content": "\n".join(texts)
+                "tool_call_id": call.id,
+                "name": tool_name,
+                "content": output
             })
+
+    final = await asyncio.to_thread(chat, messages)
+    return final.choices[0].message.content or "Agent stopped without final answer."
