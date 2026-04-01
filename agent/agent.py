@@ -38,20 +38,20 @@ async def run_agent(query: str, mcp_client, mcp_tools):
 
     for step in range(max_steps):
         response = await asyncio.to_thread(chat, messages, tools)
-        msg = response.choices[0].message
+        message = response.choices[0].message
 
         messages.append({
             "role": "assistant",
-            "content": msg.content,
-            "tool_calls": msg.tool_calls
+            "content": message.content,
+            "tool_calls": message.tool_calls
         })
 
         # Final answer
-        if not msg.tool_calls:
-            return msg.content or "No response generated."
+        if not message.tool_calls:
+            return message.content or "No response generated."
 
         # Execute tools
-        for call in msg.tool_calls:
+        for call in message.tool_calls:
             tool_name = call.function.name
             raw_args = call.function.arguments
 
